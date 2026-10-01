@@ -25,18 +25,16 @@ node serve.mjs           # preview at http://localhost:4173
 
 ## Deploy
 
-Every push to `main` runs `.github/workflows/deploy.yml`, which does three things:
+The site runs on **Cloudflare Workers** with static assets, configured in `wrangler.jsonc`. Cloudflare is connected to this repository, so every push to `main` builds the site and publishes it automatically, usually within a minute.
 
-1. **Builds** the site and checks every link.
-2. **Publishes a preview to GitHub Pages.** Turn this on once under Settings → Pages → Source: **GitHub Actions**.
-3. **Uploads to InfinityFree over FTP.** This step runs only after you add three repository secrets under Settings → Secrets and variables → Actions:
-   - `FTP_SERVER`, for example `ftpupload.net`
-   - `FTP_USERNAME`, for example `if0_12345678`
-   - `FTP_PASSWORD`, your InfinityFree FTP password
+The Cloudflare project settings are:
 
-   All three are on the InfinityFree control panel under **FTP Details**.
+- Build command: `node build.mjs --check`
+- Deploy command: `npx wrangler deploy`
 
-**Deploying by hand:** open the workflow run, download the `website-htdocs` artifact, and upload its contents (including `.htaccess`) into `htdocs` using InfinityFree's File Manager.
+Custom security and cache headers live in `src/static/_headers`. `src/static/.htaccess` is only for Apache hosts and is not uploaded to Cloudflare.
+
+GitHub Actions (`.github/workflows/check.yml`) builds the site and checks every link on each push.
 
 ## Join form
 
