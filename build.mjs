@@ -93,7 +93,8 @@ writeFileSync(join(out, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${site
 // Every local link and asset must exist; no template syntax may leak into the output.
 let problems = 0;
 for (const page of built) {
-  const html = read(join(out, page.file));
+  // <base> sets where relative links resolve from; it is not itself a link.
+  const html = read(join(out, page.file)).replace(/<base [^>]*>/, "");
   if (/\{\{|\}\}/.test(html)) {
     console.error(`${page.file}: leftover template syntax`);
     problems++;
